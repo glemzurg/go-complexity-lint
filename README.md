@@ -11,6 +11,8 @@ A complexity linter for Go that measures four metrics with a three-zone severity
 | **params** | Number of function parameters | 0–4 | 5–6 | 7+ |
 | **fanout** | Distinct non-builtin, non-stdlib function calls | 0–6 | 7–9 | 10+ |
 
+A common exception to cyclo thresholds will be for simple-to-understand functions that are just a long switch statement for routing.
+
 ### Counting Rules
 
 **Cyclomatic complexity** counts: `if`, `for`, `range`, non-default `case`, non-default `select case`. Does not count: `else`, `default`, `&&`/`||`, `switch`/`select` themselves. Each `else if` counts as a new decision.
