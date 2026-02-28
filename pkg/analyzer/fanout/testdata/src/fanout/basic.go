@@ -63,3 +63,34 @@ func MethodCall() {
 	_ = dep.A()
 	_ = s.Method()
 }
+
+// FuncLitFanOut tests that calls inside a func literal count toward
+// the enclosing function's fan out.
+// 7 distinct external calls inside the func literal. Yellow zone (warning).
+func FuncLitFanOut() { // want `function FuncLitFanOut has fan out of 7 \(warn: >6, fail: >9\) \[warning\]`
+	fn := func() {
+		_ = dep.A()
+		_ = dep.B()
+		_ = dep.C()
+		_ = dep.D()
+		_ = dep.E()
+		_ = dep.F()
+		_ = dep.G()
+	}
+	fn()
+}
+
+// GoFuncFanOut tests that calls inside a go func literal count toward
+// the enclosing function's fan out.
+// 7 distinct external calls inside the go func. Yellow zone (warning).
+func GoFuncFanOut() { // want `function GoFuncFanOut has fan out of 7 \(warn: >6, fail: >9\) \[warning\]`
+	go func() {
+		_ = dep.A()
+		_ = dep.B()
+		_ = dep.C()
+		_ = dep.D()
+		_ = dep.E()
+		_ = dep.F()
+		_ = dep.G()
+	}()
+}

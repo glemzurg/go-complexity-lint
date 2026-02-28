@@ -130,5 +130,55 @@ func NestedIf(x int) {
 	}
 }
 
+// FuncLitComplexity tests that decisions inside a func literal count toward
+// the enclosing function's complexity.
+// 1 (base) + if (in func lit) + if (in func lit) + if (in func lit) +
+// for (in func lit) + case + case + case (in func lit) = 8.
+// Plus 2 more ifs in the func lit = 10. Yellow zone (warning).
+func FuncLitComplexity() { // want `function FuncLitComplexity has cyclomatic complexity of 10 \(warn: >9, fail: >14\) \[warning\]`
+	fn := func(x int) {
+		if x > 0 {
+			if x > 5 {
+				if x > 10 {
+					_ = x
+				}
+			}
+		}
+		for i := 0; i < x; i++ {
+			switch i {
+			case 1:
+				_ = 1
+			case 2:
+				_ = 2
+			case 3:
+				_ = 3
+			}
+		}
+		if x > 20 {
+			_ = 20
+		}
+		if x > 30 {
+			_ = 30
+		}
+	}
+	fn(1)
+}
+
+// GoFuncComplexity tests that decisions inside a go func literal count toward
+// the enclosing function. 1 (base) + 9 ifs in go func = 10. Yellow zone.
+func GoFuncComplexity() { // want `function GoFuncComplexity has cyclomatic complexity of 10 \(warn: >9, fail: >14\) \[warning\]`
+	go func(x int) {
+		if x > 1 { _ = 1 }
+		if x > 2 { _ = 2 }
+		if x > 3 { _ = 3 }
+		if x > 4 { _ = 4 }
+		if x > 5 { _ = 5 }
+		if x > 6 { _ = 6 }
+		if x > 7 { _ = 7 }
+		if x > 8 { _ = 8 }
+		if x > 9 { _ = 9 }
+	}(1)
+}
+
 func doSomething() error { return nil }
 func log(err error)      {}
