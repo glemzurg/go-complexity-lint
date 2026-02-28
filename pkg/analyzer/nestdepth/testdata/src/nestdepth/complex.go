@@ -121,4 +121,42 @@ func ErrGuardExempt() (int, error) {
 	return 1, nil
 }
 
+// LabeledLoop tests that labeled statements don't add nesting depth.
+// The label itself is transparent; depth comes from the for and nested ifs.
+// for(1) -> for(2) -> if(3) -> if(4) -> if(5)
+// Depth 5 = yellow zone (warning).
+func LabeledLoop() {
+outer:
+	for i := 0; i < 10; i++ {
+		for j := 0; j < 10; j++ {
+			if i > 0 {
+				if j > 0 {
+					if i+j > 15 { // want `function LabeledLoop has a nesting depth of 5 \(warn: >4, fail: >6\) \[warning\]`
+						break outer
+					}
+				}
+			}
+		}
+	}
+}
+
+// BareBlock tests that bare block statements don't add nesting depth.
+// The block is transparent; depth comes from the constructs inside it.
+// if(1) -> for(2) -> switch(3) -> case(4) -> if(5)
+// Depth 5 = yellow zone (warning).
+func BareBlock() {
+	{
+		if true {
+			for i := 0; i < 10; i++ {
+				switch i {
+				case 1:
+					if true { // want `function BareBlock has a nesting depth of 5 \(warn: >4, fail: >6\) \[warning\]`
+						_ = i
+					}
+				}
+			}
+		}
+	}
+}
+
 func doSomething() error { return nil }
