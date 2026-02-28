@@ -98,5 +98,37 @@ func ErrGuardNonExempt() error {
 	return nil
 }
 
+// SelectCases has complexity 3 (1 + comm + comm). Green zone.
+// default does not count. select itself does not count.
+func SelectCases(ch1, ch2 chan int) {
+	select {
+	case <-ch1:
+		_ = 1
+	case <-ch2:
+		_ = 2
+	default:
+		_ = 0
+	}
+}
+
+// RangeLoop has complexity 2 (1 + range). Green zone.
+func RangeLoop(items []int) {
+	for _, v := range items {
+		_ = v
+	}
+}
+
+// NestedIf has complexity 4 (1 + if + if + if). Green zone.
+// Each if is a separate decision, even when nested.
+func NestedIf(x int) {
+	if x > 0 {
+		if x > 5 {
+			if x > 10 {
+				_ = x
+			}
+		}
+	}
+}
+
 func doSomething() error { return nil }
 func log(err error)      {}

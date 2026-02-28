@@ -34,3 +34,13 @@ func (m *MyStruct) MethodWithFourParams(a, b, c, d int) {
 func Variadic(a int, b ...string) {
 	_, _ = a, b
 }
+
+// UnnamedParams tests that unnamed parameters each count as 1.
+// 5 unnamed params. Yellow zone (warning).
+func UnnamedParams(int, string, bool, float64, error) { // want `function UnnamedParams has 5 parameters \(warn: >4, fail: >6\) \[warning\]`
+}
+
+// MixedNamedUnnamed has 5 params (3 named + 2 unnamed fields = 5). Yellow zone.
+func MixedNamedUnnamed(a, b int, _ string, _ bool, c float64) { // want `function MixedNamedUnnamed has 5 parameters \(warn: >4, fail: >6\) \[warning\]`
+	_, _, _ = a, b, c
+}
