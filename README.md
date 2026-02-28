@@ -1,6 +1,6 @@
 # go-complexity-lint
 
-A complexity linter for Go that measures four metrics with a three-zone severity model.[^1] Yellow zone (warning) prints diagnostics but exits 0. Red zone (error) prints diagnostics and exits 1.
+A complexity linter for Go that measures four metrics with a three-zone severity model.<sup><a href="#cite1">1</a></sup> Yellow zone (warning) prints diagnostics but exits 0. Red zone (error) prints diagnostics and exits 1.
 
 ## Metrics
 
@@ -110,4 +110,4 @@ Then run:
 
 ## References
 
-- Tockey, S. (2019). *How to engineer software: A model-based approach*. Wiley-IEEE Computer Society Press. Appendix N: Software Structural Complexity Metrics.
+<span id="cite1"><sup>1</sup></span> Tockey, S. (2019). *How to Engineer Software: A Model-Based Approach*. Wiley-IEEE Computer Society Press. Appendix N: Software Structural Complexity Metrics.
