@@ -34,6 +34,9 @@ func init() {
 func run(pass *analysis.Pass) (any, error) {
 	insp := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 	defaults := common.Thresholds{WarnAt: warnAt, FailAt: failAt}
+	if err := defaults.Validate("params"); err != nil {
+		return nil, err
+	}
 
 	nodeFilter := []ast.Node{(*ast.FuncDecl)(nil)}
 

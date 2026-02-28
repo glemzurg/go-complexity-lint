@@ -19,7 +19,7 @@ A complexity linter for Go that measures four metrics with a three-zone severity
 
 **Fan out** counts distinct function/method calls resolved via type information. Excludes builtins (`len`, `make`, etc.), type conversions, and standard library functions.
 
-**Error guard clause exemption**: Both `nestdepth` and `cyclo` exempt the idiomatic Go error-handling pattern `if err != nil { return ..., err }` where the body is a single return statement with zero-valued results except the final error.
+**Error guard clause exemption**: Both `nestdepth` and `cyclo` exempt the idiomatic Go error-handling pattern `if <ident> != nil { return ..., <ident> }` where the body is a single return statement with zero-valued results except the final error. The error variable can have any name (`err`, `e`, `dbErr`, etc.).
 
 ## Installation
 
@@ -38,6 +38,8 @@ go-complexity-lint ./...
 go-complexity-lint -nestdepth.warn=3 -nestdepth.fail=5 -cyclo.warn=12 -cyclo.fail=20 ./...
 go-complexity-lint -params.warn=5 -params.fail=8 -fanout.warn=8 -fanout.fail=12 ./...
 ```
+
+Thresholds must be non-negative and `warn` must not exceed `fail`.
 
 ### With `go vet`
 

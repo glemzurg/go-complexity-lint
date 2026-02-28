@@ -101,12 +101,37 @@ func TestIsErrGuard(t *testing.T) {
 			code: `if err != nil { return }`,
 			want: false,
 		},
+		{
+			name: "named error variable e",
+			code: `if e := doSomething(); e != nil { return nil, e }`,
+			want: true,
+		},
+		{
+			name: "named error variable dbErr",
+			code: `if dbErr := doSomething(); dbErr != nil { return nil, dbErr }`,
+			want: true,
+		},
+		{
+			name: "named error with wrapped call",
+			code: `if e := doSomething(); e != nil { return nil, fmt.Errorf("wrap: %w", e) }`,
+			want: true,
+		},
+		{
+			name: "nil != e reversed",
+			code: `if e := doSomething(); nil != e { return nil, e }`,
+			want: true,
+		},
+		{
+			name: "named error returns wrong variable",
+			code: `if e := doSomething(); e != nil { return nil, err }`,
+			want: false,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Need to parse with enough context for the various types
-			src := "package p\nimport \"fmt\"\nimport \"log\"\nvar result int\nvar err error\nvar x int\ntype MyStruct struct{}\nfunc doSomething() error { return nil }\nfunc f() (int, error) {\n" + tt.code + "\nreturn 0, nil\n}"
+			src := "package p\nimport \"fmt\"\nimport \"log\"\nvar result int\nvar err error\nvar e error\nvar dbErr error\nvar x int\ntype MyStruct struct{}\nfunc doSomething() error { return nil }\nfunc f() (int, error) {\n" + tt.code + "\nreturn 0, nil\n}"
 			fset := token.NewFileSet()
 			f, err2 := parser.ParseFile(fset, "test.go", src, parser.ParseComments)
 			if err2 != nil {

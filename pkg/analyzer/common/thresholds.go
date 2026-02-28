@@ -1,5 +1,7 @@
 package common
 
+import "fmt"
+
 // Zone represents a metric zone classification.
 type Zone int
 
@@ -16,6 +18,21 @@ const (
 type Thresholds struct {
 	WarnAt int
 	FailAt int
+}
+
+// Validate returns an error if the thresholds are invalid.
+// Both values must be non-negative and WarnAt must not exceed FailAt.
+func (t Thresholds) Validate(name string) error {
+	if t.WarnAt < 0 {
+		return fmt.Errorf("%s: warn threshold must be non-negative, got %d", name, t.WarnAt)
+	}
+	if t.FailAt < 0 {
+		return fmt.Errorf("%s: fail threshold must be non-negative, got %d", name, t.FailAt)
+	}
+	if t.WarnAt > t.FailAt {
+		return fmt.Errorf("%s: warn threshold (%d) must not exceed fail threshold (%d)", name, t.WarnAt, t.FailAt)
+	}
+	return nil
 }
 
 // Classify returns the zone for a given metric value.

@@ -7,13 +7,15 @@ import (
 
 // IsErrGuard reports whether an if statement is an idiomatic Go error guard clause.
 // An if statement is an error guard when ALL of these are true:
-//  1. The condition is `err != nil` (init statement can be anything)
-//  2. The body contains exactly one statement
-//  3. That statement is a return
-//  4. All return values except the last are zero-value expressions
-//  5. The last return value is either `err` or a function call
+//  1. The condition is `<ident> != nil` (or `nil != <ident>`)
+//  2. There is no else clause
+//  3. The body contains exactly one statement
+//  4. That statement is a return
+//  5. All return values except the last are zero-value expressions
+//  6. The last return value is either the same identifier or a function call
 func IsErrGuard(ifStmt *ast.IfStmt) bool {
-	if !isErrNotNil(ifStmt.Cond) {
+	errName := identNotNil(ifStmt.Cond)
+	if errName == "" {
 		return false
 	}
 	if ifStmt.Else != nil {
@@ -29,39 +31,40 @@ func IsErrGuard(ifStmt *ast.IfStmt) bool {
 	if len(retStmt.Results) == 0 {
 		return false
 	}
-	return isErrReturn(retStmt.Results)
+	return isErrReturn(retStmt.Results, errName)
 }
 
-// isErrNotNil checks if the condition is `err != nil` (or `nil != err`).
-func isErrNotNil(cond ast.Expr) bool {
+// identNotNil checks if the condition is `<ident> != nil` (or `nil != <ident>`).
+// Returns the identifier name, or "" if the condition doesn't match.
+func identNotNil(cond ast.Expr) string {
 	binExpr, ok := cond.(*ast.BinaryExpr)
 	if !ok || binExpr.Op != token.NEQ {
-		return false
+		return ""
 	}
 
 	xIdent, xIsIdent := binExpr.X.(*ast.Ident)
 	yIdent, yIsIdent := binExpr.Y.(*ast.Ident)
 
-	// err != nil
-	if xIsIdent && xIdent.Name == "err" && yIsIdent && yIdent.Name == "nil" {
-		return true
+	// <ident> != nil
+	if xIsIdent && yIsIdent && yIdent.Name == "nil" {
+		return xIdent.Name
 	}
-	// nil != err
-	if xIsIdent && xIdent.Name == "nil" && yIsIdent && yIdent.Name == "err" {
-		return true
+	// nil != <ident>
+	if xIsIdent && xIdent.Name == "nil" && yIsIdent {
+		return yIdent.Name
 	}
-	return false
+	return ""
 }
 
 // isErrReturn checks that all return values except the last are zero-value
-// expressions, and the last is either `err` or a function call.
-func isErrReturn(results []ast.Expr) bool {
+// expressions, and the last is either the error identifier or a function call.
+func isErrReturn(results []ast.Expr, errName string) bool {
 	last := results[len(results)-1]
 
-	// Check the last return value is `err` or a function call.
+	// Check the last return value is the error variable or a function call.
 	switch v := last.(type) {
 	case *ast.Ident:
-		if v.Name != "err" {
+		if v.Name != errName {
 			return false
 		}
 	case *ast.CallExpr:
