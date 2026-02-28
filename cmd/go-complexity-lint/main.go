@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/glemzurg/go-complexity-lint/pkg/analyzer/cyclo"
 	"github.com/glemzurg/go-complexity-lint/pkg/analyzer/fanout"
@@ -13,9 +14,11 @@ import (
 	"github.com/glemzurg/go-complexity-lint/pkg/analyzer/params"
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/checker"
+	"golang.org/x/tools/go/analysis/unitchecker"
 	"golang.org/x/tools/go/packages"
 )
 
+//complexity:cyclo:warn=20,fail=25
 func main() {
 	progname := filepath.Base(os.Args[0])
 	log.SetFlags(0)
@@ -26,6 +29,15 @@ func main() {
 		cyclo.Analyzer,
 		params.Analyzer,
 		fanout.Analyzer,
+	}
+
+	// When invoked by "go vet -vettool", delegate to unitchecker
+	// which handles the -flags, -V=full, and *.cfg protocol.
+	if len(os.Args) > 1 {
+		arg := os.Args[1]
+		if arg == "-flags" || strings.HasPrefix(arg, "-V=") || strings.HasSuffix(arg, ".cfg") {
+			unitchecker.Main(analyzers...)
+		}
 	}
 
 	if err := analysis.Validate(analyzers); err != nil {

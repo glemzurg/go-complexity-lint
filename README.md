@@ -33,6 +33,10 @@ go install github.com/glemzurg/go-complexity-lint/cmd/go-complexity-lint@latest
 
 ```sh
 go-complexity-lint ./...
+
+# With custom thresholds (flags are namespaced by analyzer)
+go-complexity-lint -nestdepth.warn=3 -nestdepth.fail=5 -cyclo.warn=12 -cyclo.fail=20 ./...
+go-complexity-lint -params.warn=5 -params.fail=8 -fanout.warn=8 -fanout.fail=12 ./...
 ```
 
 ### With `go vet`
@@ -41,16 +45,14 @@ go-complexity-lint ./...
 go vet -vettool=$(which go-complexity-lint) ./...
 ```
 
-### Threshold Flags
-
-Flags are namespaced by analyzer:
+Note: `go vet` treats all diagnostics as failures (exit 1) regardless of zone. It does not distinguish between warnings and errors. To suppress warnings and only fail on red-zone violations, set `warn` equal to `fail`:
 
 ```sh
-go-complexity-lint -nestdepth.warn=3 -nestdepth.fail=5 ./...
-go-complexity-lint -cyclo.warn=12 -cyclo.fail=20 ./...
-go-complexity-lint -params.warn=5 -params.fail=8 ./...
-go-complexity-lint -fanout.warn=8 -fanout.fail=12 ./...
+go vet -vettool=$(which go-complexity-lint) \
+  -nestdepth.warn=6 -cyclo.warn=14 -params.warn=6 -fanout.warn=9 ./...
 ```
+
+For full severity-aware exit codes, use the standalone binary.
 
 ### Per-Function Overrides
 
@@ -87,7 +89,18 @@ linters-settings:
   custom:
     go-complexity-lint:
       type: module
+      settings:
+        nestdepth-warn: 3
+        nestdepth-fail: 5
+        cyclo-warn: 12
+        cyclo-fail: 20
+        params-warn: 5
+        params-fail: 8
+        fanout-warn: 8
+        fanout-fail: 12
 ```
+
+All settings are optional. Omitted values use the defaults from the metrics table above.
 
 Build the custom binary:
 
