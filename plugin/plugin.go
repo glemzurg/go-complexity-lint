@@ -22,8 +22,9 @@ type Settings struct {
 	CycloFail     *int `json:"cyclo-fail"`
 	ParamsWarn    *int `json:"params-warn"`
 	ParamsFail    *int `json:"params-fail"`
-	FanoutWarn    *int `json:"fanout-warn"`
-	FanoutFail    *int `json:"fanout-fail"`
+	FanoutWarn    *int    `json:"fanout-warn"`
+	FanoutFail    *int    `json:"fanout-fail"`
+	Exclude       *string `json:"exclude"`
 }
 
 func New(conf any) (register.LinterPlugin, error) {
@@ -67,6 +68,13 @@ func (p *complexityPlugin) BuildAnalyzers() ([]*analysis.Analyzer, error) {
 			if err := o.analyzer.Flags.Set("fail", fmt.Sprint(*o.fail)); err != nil {
 				return nil, fmt.Errorf("setting %s.fail: %w", o.analyzer.Name, err)
 			}
+		}
+	}
+
+	if p.settings.Exclude != nil {
+		// All analyzers share the same exclude variable; setting it on one is sufficient.
+		if err := cyclo.Analyzer.Flags.Set("exclude", *p.settings.Exclude); err != nil {
+			return nil, fmt.Errorf("setting exclude: %w", err)
 		}
 	}
 

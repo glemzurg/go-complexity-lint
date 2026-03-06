@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/glemzurg/go-complexity-lint/pkg/analyzer/common"
 	"github.com/glemzurg/go-complexity-lint/pkg/analyzer/cyclo"
 	"github.com/glemzurg/go-complexity-lint/pkg/analyzer/fanout"
 	"github.com/glemzurg/go-complexity-lint/pkg/analyzer/nestdepth"
@@ -44,9 +45,16 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// Register a global -exclude flag (shared across all analyzers).
+	flag.StringVar(&common.ExcludePatterns, "exclude", "",
+		"comma-separated filename glob patterns to skip (e.g. *_gen.go)")
+
 	// Register analyzer flags with namespace prefix (e.g., cyclo.warn).
 	for _, a := range analyzers {
 		a.Flags.VisitAll(func(f *flag.Flag) {
+			if f.Name == "exclude" {
+				return // covered by the global -exclude flag
+			}
 			name := a.Name + "." + f.Name
 			flag.Var(f.Value, name, f.Usage)
 		})
@@ -70,6 +78,8 @@ Flags are namespaced by analyzer, e.g.:
   -cyclo.warn=9      -cyclo.fail=14
   -params.warn=4     -params.fail=6
   -fanout.warn=6     -fanout.fail=9
+
+  -exclude="*_gen.go,mock_*.go"  skip files matching glob patterns
 
 Exit codes:
   0  no red-zone violations (warnings may be present)

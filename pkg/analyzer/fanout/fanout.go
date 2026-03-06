@@ -31,6 +31,8 @@ func init() {
 		"fan out count above this triggers a warning (yellow zone)")
 	Analyzer.Flags.IntVar(&failAt, "fail", 9,
 		"fan out count above this triggers a failure (red zone)")
+	Analyzer.Flags.StringVar(&common.ExcludePatterns, "exclude", "",
+		"comma-separated filename glob patterns to skip (e.g. *_gen.go)")
 }
 
 func run(pass *analysis.Pass) (any, error) {
@@ -45,6 +47,9 @@ func run(pass *analysis.Pass) (any, error) {
 	insp.Preorder(nodeFilter, func(n ast.Node) {
 		funcDecl := n.(*ast.FuncDecl)
 		if funcDecl.Body == nil {
+			return
+		}
+		if common.IsExcluded(pass.Fset.Position(funcDecl.Pos()).Filename) {
 			return
 		}
 

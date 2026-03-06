@@ -39,6 +39,9 @@ go-complexity-lint ./...
 # With custom thresholds (flags are namespaced by analyzer)
 go-complexity-lint -nestdepth.warn=3 -nestdepth.fail=5 -cyclo.warn=12 -cyclo.fail=20 ./...
 go-complexity-lint -params.warn=5 -params.fail=8 -fanout.warn=8 -fanout.fail=12 ./...
+
+# Exclude files by glob pattern (matched against base filename)
+go-complexity-lint -exclude="*_gen.go,mock_*.go" ./...
 ```
 
 Thresholds must be non-negative and `warn` must not exceed `fail`.
@@ -47,6 +50,9 @@ Thresholds must be non-negative and `warn` must not exceed `fail`.
 
 ```sh
 go vet -vettool=$(which go-complexity-lint) ./...
+
+# Exclude files (use any analyzer prefix; the setting applies globally)
+go vet -vettool=$(which go-complexity-lint) -cyclo.exclude="*_gen.go" ./...
 ```
 
 Note: `go vet` treats all diagnostics as failures (exit 1) regardless of zone. It does not distinguish between warnings and errors. To suppress warnings and only fail on red-zone violations, set `warn` equal to `fail`:
@@ -102,6 +108,7 @@ linters-settings:
         params-fail: 8
         fanout-warn: 8
         fanout-fail: 12
+        exclude: "*_gen.go,mock_*.go"
 ```
 
 All settings are optional. Omitted values use the defaults from the metrics table above.
