@@ -34,7 +34,12 @@ func ParseOverrides(funcDecl *ast.FuncDecl, metricName string, defaults Threshol
 			if len(kv) != 2 {
 				continue
 			}
-			val, err := strconv.Atoi(strings.TrimSpace(kv[1]))
+			// Strip trailing comments/text after the numeric value (e.g. "50 A simple routing switch").
+			valStr := strings.TrimSpace(kv[1])
+			if idx := strings.IndexByte(valStr, ' '); idx >= 0 {
+				valStr = valStr[:idx]
+			}
+			val, err := strconv.Atoi(valStr)
 			if err != nil {
 				continue
 			}

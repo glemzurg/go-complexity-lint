@@ -49,7 +49,7 @@ func SwitchCases(x int) {
 
 // ComplexFunc has complexity 10 (yellow zone).
 // 1 + if + for + range + case + case + case + if + if + if = 10
-func ComplexFunc(x int, items []int) { // want `function ComplexFunc has cyclomatic complexity of 10 \(warn: >9, fail: >14\) \[warning\] \(reduce by extracting logic into smaller functions or replacing conditional chains with table/map lookups; if this is a simple routing switch, consider a //complexity:cyclo override\)`
+func ComplexFunc(x int, items []int) { // want `function ComplexFunc has cyclomatic complexity of 10 \(warn: >9, fail: >14\) \[warning\] \(reduce by extracting logic into smaller functions or replacing conditional chains with table/map lookups; if this is a simple routing switch, consider override //complexity:cyclo:warn=N,fail=N Simple routing switch.\)`
 	if x > 0 {
 		for i := 0; i < x; i++ {
 			_ = i
@@ -135,7 +135,7 @@ func NestedIf(x int) {
 // 1 (base) + if (in func lit) + if (in func lit) + if (in func lit) +
 // for (in func lit) + case + case + case (in func lit) = 8.
 // Plus 2 more ifs in the func lit = 10. Yellow zone (warning).
-func FuncLitComplexity() { // want `function FuncLitComplexity has cyclomatic complexity of 10 \(warn: >9, fail: >14\) \[warning\] \(reduce by extracting logic into smaller functions or replacing conditional chains with table/map lookups; if this is a simple routing switch, consider a //complexity:cyclo override\)`
+func FuncLitComplexity() { // want `function FuncLitComplexity has cyclomatic complexity of 10 \(warn: >9, fail: >14\) \[warning\] \(reduce by extracting logic into smaller functions or replacing conditional chains with table/map lookups; if this is a simple routing switch, consider override //complexity:cyclo:warn=N,fail=N Simple routing switch.\)`
 	fn := func(x int) {
 		if x > 0 {
 			if x > 5 {
@@ -166,7 +166,7 @@ func FuncLitComplexity() { // want `function FuncLitComplexity has cyclomatic co
 
 // GoFuncComplexity tests that decisions inside a go func literal count toward
 // the enclosing function. 1 (base) + 9 ifs in go func = 10. Yellow zone.
-func GoFuncComplexity() { // want `function GoFuncComplexity has cyclomatic complexity of 10 \(warn: >9, fail: >14\) \[warning\] \(reduce by extracting logic into smaller functions or replacing conditional chains with table/map lookups; if this is a simple routing switch, consider a //complexity:cyclo override\)`
+func GoFuncComplexity() { // want `function GoFuncComplexity has cyclomatic complexity of 10 \(warn: >9, fail: >14\) \[warning\] \(reduce by extracting logic into smaller functions or replacing conditional chains with table/map lookups; if this is a simple routing switch, consider override //complexity:cyclo:warn=N,fail=N Simple routing switch.\)`
 	go func(x int) {
 		if x > 1 { _ = 1 }
 		if x > 2 { _ = 2 }

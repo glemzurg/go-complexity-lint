@@ -67,7 +67,7 @@ func run(pass *analysis.Pass) (any, error) {
 			Category: zone.Category(),
 			Message: fmt.Sprintf(
 				"function %s has cyclomatic complexity of %d (warn: >%d, fail: >%d) [%s] "+
-					"(reduce by extracting logic into smaller functions or replacing conditional chains with table/map lookups; if this is a simple routing switch, consider a //complexity:cyclo override)",
+					"(reduce by extracting logic into smaller functions or replacing conditional chains with table/map lookups; if this is a simple routing switch, consider override //complexity:cyclo:warn=N,fail=N Simple routing switch.)",
 				funcName, complexity, thresholds.WarnAt, thresholds.FailAt,
 				zone.Category()),
 		})

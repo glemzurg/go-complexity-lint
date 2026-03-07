@@ -68,7 +68,7 @@ func run(pass *analysis.Pass) (any, error) {
 			Category: zone.Category(),
 			Message: fmt.Sprintf(
 				"function %s has fan out of %d (warn: >%d, fail: >%d) [%s] "+
-					"(reduce by extracting groups of related calls into helper functions to limit direct dependencies)",
+					"(reduce by extracting groups of related calls into helper functions to limit direct dependencies; if this is a simple routing switch, consider override //complexity:fanout:warn=N,fail=N Simple routing switch.)",
 				funcName, distinctCalls, thresholds.WarnAt, thresholds.FailAt,
 				zone.Category()),
 		})

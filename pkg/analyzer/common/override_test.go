@@ -68,6 +68,18 @@ func TestParseOverrides(t *testing.T) {
 			metric: "nestdepth",
 			want:   defaults,
 		},
+		{
+			name:   "trailing comment after last value",
+			src:    "//complexity:cyclo:warn=50,fail=50 A simple routing switch.\nfunc Foo() {}",
+			metric: "cyclo",
+			want:   Thresholds{WarnAt: 50, FailAt: 50},
+		},
+		{
+			name:   "trailing comment after only value",
+			src:    "//complexity:fanout:warn=20 high fan-out is intentional\nfunc Foo() {}",
+			metric: "fanout",
+			want:   Thresholds{WarnAt: 20, FailAt: 6},
+		},
 	}
 
 	for _, tt := range tests {

@@ -69,12 +69,16 @@ For full severity-aware exit codes, use the standalone binary.
 Use doc comments to override thresholds for specific functions:
 
 ```go
-//complexity:cyclo:warn=20,fail=30
+//complexity:cyclo:warn=50,fail=50 Simple routing switch.
+//complexity:fanout:warn=15,fail=20 Simple routing switch.
 //complexity:nestdepth:warn=8,fail=10
+//complexity:params:warn=8,fail=10
 func ComplexRouter(input string) error {
     // ...
 }
 ```
+
+Trailing text after the values is allowed as an inline explanation (see `cyclo` and `fanout` above).
 
 ## golangci-lint Integration
 
