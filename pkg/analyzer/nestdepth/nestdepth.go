@@ -67,7 +67,8 @@ func run(pass *analysis.Pass) (any, error) {
 			Pos:      deepestPos,
 			Category: zone.Category(),
 			Message: fmt.Sprintf(
-				"function %s has a nesting depth of %d (warn: >%d, fail: >%d) [%s]",
+				"function %s has a nesting depth of %d (warn: >%d, fail: >%d) [%s] "+
+					"(reduce by extracting nested blocks into functions or using early returns/guard clauses)",
 				funcName, deepestDepth, thresholds.WarnAt, thresholds.FailAt,
 				zone.Category()),
 		})

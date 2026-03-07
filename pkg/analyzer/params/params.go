@@ -65,7 +65,8 @@ func run(pass *analysis.Pass) (any, error) {
 			Pos:      funcDecl.Pos(),
 			Category: zone.Category(),
 			Message: fmt.Sprintf(
-				"function %s has %d parameters (warn: >%d, fail: >%d) [%s]",
+				"function %s has %d parameters (warn: >%d, fail: >%d) [%s] "+
+					"(reduce by grouping related parameters into a struct or using an options/config pattern)",
 				funcName, paramCount, thresholds.WarnAt, thresholds.FailAt,
 				zone.Category()),
 		})

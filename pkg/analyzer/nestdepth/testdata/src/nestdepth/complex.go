@@ -15,7 +15,7 @@ func (m *MyStruct) DeepMethod() {
 			case 0:
 				select {
 				case <-make(chan int):
-					_ = i // want `function \*MyStruct\.DeepMethod has a nesting depth of 6 \(warn: >4, fail: >6\) \[warning\]`
+					_ = i // want `function \*MyStruct\.DeepMethod has a nesting depth of 6 \(warn: >4, fail: >6\) \[warning\] \(reduce by extracting nested blocks into functions or using early returns/guard clauses\)`
 				}
 			}
 		}
@@ -31,7 +31,7 @@ func ClosureNesting() {
 			for i := 0; i < 10; i++ {
 				switch i {
 				case 1:
-					if true { // want `function ClosureNesting has a nesting depth of 6 \(warn: >4, fail: >6\) \[warning\]`
+					if true { // want `function ClosureNesting has a nesting depth of 6 \(warn: >4, fail: >6\) \[warning\] \(reduce by extracting nested blocks into functions or using early returns/guard clauses\)`
 						_ = i
 					}
 				}
@@ -62,7 +62,7 @@ func RangeLoop() {
 			switch v {
 			case 1:
 				for _, w := range []int{4, 5} {
-					if w > 0 { // want `function RangeLoop has a nesting depth of 6 \(warn: >4, fail: >6\) \[warning\]`
+					if w > 0 { // want `function RangeLoop has a nesting depth of 6 \(warn: >4, fail: >6\) \[warning\] \(reduce by extracting nested blocks into functions or using early returns/guard clauses\)`
 						_ = w
 					}
 				}
@@ -101,7 +101,7 @@ func GoRoutineClosure() {
 			case 1:
 				select {
 				default:
-					if true { // want `function GoRoutineClosure has a nesting depth of 7 \(warn: >4, fail: >6\) \[error\]`
+					if true { // want `function GoRoutineClosure has a nesting depth of 7 \(warn: >4, fail: >6\) \[error\] \(reduce by extracting nested blocks into functions or using early returns/guard clauses\)`
 						fmt.Println(i)
 					}
 				}
@@ -131,7 +131,7 @@ outer:
 		for j := 0; j < 10; j++ {
 			if i > 0 {
 				if j > 0 {
-					if i+j > 15 { // want `function LabeledLoop has a nesting depth of 5 \(warn: >4, fail: >6\) \[warning\]`
+					if i+j > 15 { // want `function LabeledLoop has a nesting depth of 5 \(warn: >4, fail: >6\) \[warning\] \(reduce by extracting nested blocks into functions or using early returns/guard clauses\)`
 						break outer
 					}
 				}
@@ -150,7 +150,7 @@ func BareBlock() {
 			for i := 0; i < 10; i++ {
 				switch i {
 				case 1:
-					if true { // want `function BareBlock has a nesting depth of 5 \(warn: >4, fail: >6\) \[warning\]`
+					if true { // want `function BareBlock has a nesting depth of 5 \(warn: >4, fail: >6\) \[warning\] \(reduce by extracting nested blocks into functions or using early returns/guard clauses\)`
 						_ = i
 					}
 				}

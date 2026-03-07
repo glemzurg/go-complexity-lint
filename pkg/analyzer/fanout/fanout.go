@@ -67,7 +67,8 @@ func run(pass *analysis.Pass) (any, error) {
 			Pos:      funcDecl.Pos(),
 			Category: zone.Category(),
 			Message: fmt.Sprintf(
-				"function %s has fan out of %d (warn: >%d, fail: >%d) [%s]",
+				"function %s has fan out of %d (warn: >%d, fail: >%d) [%s] "+
+					"(reduce by extracting groups of related calls into helper functions to limit direct dependencies)",
 				funcName, distinctCalls, thresholds.WarnAt, thresholds.FailAt,
 				zone.Category()),
 		})

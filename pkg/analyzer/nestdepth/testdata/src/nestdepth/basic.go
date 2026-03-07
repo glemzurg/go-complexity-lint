@@ -37,7 +37,7 @@ func DepthFive() {
 		for i := 0; i < 10; i++ {
 			switch i {
 			case 1:
-				if true { // want `function DepthFive has a nesting depth of 5 \(warn: >4, fail: >6\) \[warning\]`
+				if true { // want `function DepthFive has a nesting depth of 5 \(warn: >4, fail: >6\) \[warning\] \(reduce by extracting nested blocks into functions or using early returns/guard clauses\)`
 					_ = i
 				}
 			}
@@ -54,7 +54,7 @@ func DepthSeven() {
 			case 1:
 				if true {
 					for j := 0; j < 5; j++ {
-						if true { // want `function DepthSeven has a nesting depth of 7 \(warn: >4, fail: >6\) \[error\]`
+						if true { // want `function DepthSeven has a nesting depth of 7 \(warn: >4, fail: >6\) \[error\] \(reduce by extracting nested blocks into functions or using early returns/guard clauses\)`
 							_ = j
 						}
 					}

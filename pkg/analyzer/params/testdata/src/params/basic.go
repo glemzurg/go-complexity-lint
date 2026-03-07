@@ -9,17 +9,17 @@ func FourParams(a, b, c, d int) {
 }
 
 // FiveParams has 5 params. Yellow zone (warning).
-func FiveParams(a, b, c, d, e int) { // want `function FiveParams has 5 parameters \(warn: >4, fail: >6\) \[warning\]`
+func FiveParams(a, b, c, d, e int) { // want `function FiveParams has 5 parameters \(warn: >4, fail: >6\) \[warning\] \(reduce by grouping related parameters into a struct or using an options/config pattern\)`
 	_ = a + b + c + d + e
 }
 
 // SevenParams has 7 params. Red zone (error).
-func SevenParams(a, b int, c string, d, e, f float64, g bool) { // want `function SevenParams has 7 parameters \(warn: >4, fail: >6\) \[error\]`
+func SevenParams(a, b int, c string, d, e, f float64, g bool) { // want `function SevenParams has 7 parameters \(warn: >4, fail: >6\) \[error\] \(reduce by grouping related parameters into a struct or using an options/config pattern\)`
 	_, _, _, _, _, _, _ = a, b, c, d, e, f, g
 }
 
 // GroupedParams has 5 params despite only 2 field entries. Yellow zone.
-func GroupedParams(a, b, c int, d, e string) { // want `function GroupedParams has 5 parameters \(warn: >4, fail: >6\) \[warning\]`
+func GroupedParams(a, b, c int, d, e string) { // want `function GroupedParams has 5 parameters \(warn: >4, fail: >6\) \[warning\] \(reduce by grouping related parameters into a struct or using an options/config pattern\)`
 	_, _, _, _, _ = a, b, c, d, e
 }
 
@@ -37,10 +37,10 @@ func Variadic(a int, b ...string) {
 
 // UnnamedParams tests that unnamed parameters each count as 1.
 // 5 unnamed params. Yellow zone (warning).
-func UnnamedParams(int, string, bool, float64, error) { // want `function UnnamedParams has 5 parameters \(warn: >4, fail: >6\) \[warning\]`
+func UnnamedParams(int, string, bool, float64, error) { // want `function UnnamedParams has 5 parameters \(warn: >4, fail: >6\) \[warning\] \(reduce by grouping related parameters into a struct or using an options/config pattern\)`
 }
 
 // MixedNamedUnnamed has 5 params (3 named + 2 unnamed fields = 5). Yellow zone.
-func MixedNamedUnnamed(a, b int, _ string, _ bool, c float64) { // want `function MixedNamedUnnamed has 5 parameters \(warn: >4, fail: >6\) \[warning\]`
+func MixedNamedUnnamed(a, b int, _ string, _ bool, c float64) { // want `function MixedNamedUnnamed has 5 parameters \(warn: >4, fail: >6\) \[warning\] \(reduce by grouping related parameters into a struct or using an options/config pattern\)`
 	_, _, _ = a, b, c
 }
