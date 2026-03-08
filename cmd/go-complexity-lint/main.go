@@ -50,6 +50,7 @@ func main() {
 		"comma-separated filename glob patterns to skip (e.g. *_gen.go)")
 
 	// Register analyzer flags with namespace prefix (e.g., cyclo.warn).
+	// Also register hyphen-separated aliases (e.g., cyclo-warn) for convenience.
 	for _, a := range analyzers {
 		a.Flags.VisitAll(func(f *flag.Flag) {
 			if f.Name == "exclude" {
@@ -57,6 +58,8 @@ func main() {
 			}
 			name := a.Name + "." + f.Name
 			flag.Var(f.Value, name, f.Usage)
+			alias := a.Name + "-" + f.Name
+			flag.Var(f.Value, alias, f.Usage)
 		})
 	}
 	flag.Parse()
@@ -73,11 +76,14 @@ Analyzers:
   params      reports functions with too many parameters
   fanout      reports functions with high fan-out
 
-Flags are namespaced by analyzer, e.g.:
+Flags are namespaced by analyzer (dot or hyphen separator), e.g.:
   -nestdepth.warn=4  -nestdepth.fail=6
   -cyclo.warn=9      -cyclo.fail=14
   -params.warn=4     -params.fail=6
   -fanout.warn=6     -fanout.fail=9
+
+Hyphen-separated aliases also work:
+  -cyclo-warn=9      -cyclo-fail=14
 
   -exclude="*_gen.go,mock_*.go"  skip files matching glob patterns
 
