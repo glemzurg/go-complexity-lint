@@ -66,7 +66,7 @@ func run(pass *analysis.Pass) (any, error) {
 			Category: zone.Category(),
 			Message: fmt.Sprintf(
 				"function %s has %d parameters (warn: >%d, fail: >%d) [%s] "+
-					"(reduce by grouping coherently related subsets of parameters into structs — do not simply wrap all params into a single Params struct)",
+					"(reduce by grouping coherently related subsets of parameters into structs — do not simply wrap all params into a single struct)",
 				funcName, paramCount, thresholds.WarnAt, thresholds.FailAt,
 				zone.Category()),
 		})
