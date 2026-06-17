@@ -37,6 +37,8 @@ func main() {
 	if len(os.Args) > 1 {
 		arg := os.Args[1]
 		if arg == "-flags" || strings.HasPrefix(arg, "-V=") || strings.HasSuffix(arg, ".cfg") {
+			// go vet has no -warnings flag; default to red-zone-only reporting.
+			common.ConfigureRedZoneOnly(analyzers)
 			unitchecker.Main(analyzers...)
 		}
 	}

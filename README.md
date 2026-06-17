@@ -64,16 +64,13 @@ go vet -vettool=$(which go-complexity-lint) ./...
 go vet -vettool=$(which go-complexity-lint) -cyclo.exclude="*_gen.go" ./...
 ```
 
-Note: `go vet` treats all diagnostics as failures (exit 1) regardless of zone. It does not distinguish between warnings and errors, and does not support `-warnings`. To suppress warnings and only fail on red-zone violations, either set `warn` equal to `fail` (using each metric's default `fail` value) or use the standalone binary with `-warnings=none`:
+Note: `go vet` treats all reported diagnostics as failures (exit 1). It does not distinguish between warnings and errors, and does not support `-warnings`. The vet driver defaults to red-zone-only reporting (`warn=fail` for each metric), so yellow-zone violations are not reported. To see warnings under vet, set `warn` below `fail`:
 
 ```sh
-go vet -vettool=$(which go-complexity-lint) \
-  -nestdepth.warn=7 -cyclo.warn=15 -params.warn=7 -fanout.warn=10 ./...
-
-go-complexity-lint -warnings=none ./...
+go vet -vettool=$(which go-complexity-lint) -cyclo.warn=10 ./...
 ```
 
-For full severity-aware exit codes, use the standalone binary.
+The standalone binary supports full severity-aware exit codes and `-warnings=default|none|error`.
 
 ### Per-Function Overrides
 

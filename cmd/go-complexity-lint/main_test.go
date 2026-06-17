@@ -7,7 +7,43 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/glemzurg/go-complexity-lint/pkg/analyzer/common"
+	"github.com/glemzurg/go-complexity-lint/pkg/analyzer/cyclo"
+	"github.com/glemzurg/go-complexity-lint/pkg/analyzer/fanout"
+	"github.com/glemzurg/go-complexity-lint/pkg/analyzer/nestdepth"
+	"github.com/glemzurg/go-complexity-lint/pkg/analyzer/params"
+	"golang.org/x/tools/go/analysis"
 )
+
+func TestVetRedZoneDefaults(t *testing.T) {
+	analyzers := []*analysis.Analyzer{
+		nestdepth.Analyzer,
+		cyclo.Analyzer,
+		params.Analyzer,
+		fanout.Analyzer,
+	}
+
+	saved := make(map[*analysis.Analyzer]string, len(analyzers))
+	for _, a := range analyzers {
+		saved[a] = a.Flags.Lookup("warn").Value.String()
+	}
+	t.Cleanup(func() {
+		for a, warn := range saved {
+			_ = a.Flags.Set("warn", warn)
+		}
+	})
+
+	common.ConfigureRedZoneOnly(analyzers)
+
+	for _, a := range analyzers {
+		warn := a.Flags.Lookup("warn").Value.String()
+		fail := a.Flags.Lookup("fail").Value.String()
+		if warn != fail {
+			t.Fatalf("%s: warn=%s, want fail=%s", a.Name, warn, fail)
+		}
+	}
+}
 
 func TestWarningsModesCLI(t *testing.T) {
 	bin := buildBinary(t)
