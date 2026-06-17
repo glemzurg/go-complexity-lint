@@ -76,14 +76,16 @@ Analyzers:
   params      reports functions with too many parameters
   fanout      reports functions with high fan-out
 
-Flags are namespaced by analyzer (dot or hyphen separator), e.g.:
-  -nestdepth.warn=4  -nestdepth.fail=6
-  -cyclo.warn=9      -cyclo.fail=14
-  -params.warn=4     -params.fail=6
-  -fanout.warn=6     -fanout.fail=9
+Flags are namespaced by analyzer (dot or hyphen separator). The warn/fail
+values are inclusive lower bounds (a value at or above the threshold triggers
+the zone). Defaults shown:
+  -nestdepth.warn=5  -nestdepth.fail=7
+  -cyclo.warn=10     -cyclo.fail=15
+  -params.warn=5     -params.fail=7
+  -fanout.warn=7     -fanout.fail=10
 
 Hyphen-separated aliases also work:
-  -cyclo-warn=9      -cyclo-fail=14
+  -cyclo-warn=10     -cyclo-fail=15
 
   -exclude="*_gen.go,mock_*.go"  skip files matching glob patterns
 

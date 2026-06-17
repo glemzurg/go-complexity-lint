@@ -2,6 +2,8 @@
 
 A complexity linter for Go that measures four metrics with a three-zone severity model.<sup><a href="#cite1">1</a></sup> Yellow zone (warning) prints diagnostics but exits 0. Red zone (error) prints diagnostics and exits 1.
 
+The `warn` and `fail` thresholds are **inclusive lower bounds**: they name the value at which each zone *begins*. For example, the default `cyclo` thresholds `warn=10, fail=15` mean a value of 10 or more warns and a value of 15 or more fails (a value of 9 is still green, 14 is still a warning).
+
 ## Metrics
 
 | Metric | What It Measures | Green | Yellow (warn) | Red (fail) |
@@ -55,11 +57,11 @@ go vet -vettool=$(which go-complexity-lint) ./...
 go vet -vettool=$(which go-complexity-lint) -cyclo.exclude="*_gen.go" ./...
 ```
 
-Note: `go vet` treats all diagnostics as failures (exit 1) regardless of zone. It does not distinguish between warnings and errors. To suppress warnings and only fail on red-zone violations, set `warn` equal to `fail`:
+Note: `go vet` treats all diagnostics as failures (exit 1) regardless of zone. It does not distinguish between warnings and errors. To suppress warnings and only fail on red-zone violations, set `warn` equal to `fail` (using each metric's default `fail` value):
 
 ```sh
 go vet -vettool=$(which go-complexity-lint) \
-  -nestdepth.warn=6 -cyclo.warn=14 -params.warn=6 -fanout.warn=9 ./...
+  -nestdepth.warn=7 -cyclo.warn=15 -params.warn=7 -fanout.warn=10 ./...
 ```
 
 For full severity-aware exit codes, use the standalone binary.

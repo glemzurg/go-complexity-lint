@@ -25,10 +25,10 @@ var (
 )
 
 func init() {
-	Analyzer.Flags.IntVar(&warnAt, "warn", 4,
-		"parameter count above this triggers a warning (yellow zone)")
-	Analyzer.Flags.IntVar(&failAt, "fail", 6,
-		"parameter count above this triggers a failure (red zone)")
+	Analyzer.Flags.IntVar(&warnAt, "warn", 5,
+		"parameter count at or above this triggers a warning (yellow zone)")
+	Analyzer.Flags.IntVar(&failAt, "fail", 7,
+		"parameter count at or above this triggers a failure (red zone)")
 	Analyzer.Flags.StringVar(&common.ExcludePatterns, "exclude", "",
 		"comma-separated filename glob patterns to skip (e.g. *_gen.go)")
 }
@@ -65,7 +65,7 @@ func run(pass *analysis.Pass) (any, error) {
 			Pos:      funcDecl.Pos(),
 			Category: zone.Category(),
 			Message: fmt.Sprintf(
-				"function %s has %d parameters (warn: >%d, fail: >%d) [%s] "+
+				"function %s has %d parameters (warn: >=%d, fail: >=%d) [%s] "+
 					"(reduce by grouping coherently related subsets of parameters into structs — do not simply wrap all params into a single struct)",
 				funcName, paramCount, thresholds.WarnAt, thresholds.FailAt,
 				zone.Category()),

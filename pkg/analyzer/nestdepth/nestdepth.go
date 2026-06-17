@@ -27,10 +27,10 @@ var (
 )
 
 func init() {
-	Analyzer.Flags.IntVar(&warnAt, "warn", 4,
-		"nesting depth above this triggers a warning (yellow zone)")
-	Analyzer.Flags.IntVar(&failAt, "fail", 6,
-		"nesting depth above this triggers a failure (red zone)")
+	Analyzer.Flags.IntVar(&warnAt, "warn", 5,
+		"nesting depth at or above this triggers a warning (yellow zone)")
+	Analyzer.Flags.IntVar(&failAt, "fail", 7,
+		"nesting depth at or above this triggers a failure (red zone)")
 	Analyzer.Flags.StringVar(&common.ExcludePatterns, "exclude", "",
 		"comma-separated filename glob patterns to skip (e.g. *_gen.go)")
 }
@@ -67,7 +67,7 @@ func run(pass *analysis.Pass) (any, error) {
 			Pos:      deepestPos,
 			Category: zone.Category(),
 			Message: fmt.Sprintf(
-				"function %s has a nesting depth of %d (warn: >%d, fail: >%d) [%s] "+
+				"function %s has a nesting depth of %d (warn: >=%d, fail: >=%d) [%s] "+
 					"(reduce by extracting nested blocks into functions or using early returns/guard clauses)",
 				funcName, deepestDepth, thresholds.WarnAt, thresholds.FailAt,
 				zone.Category()),

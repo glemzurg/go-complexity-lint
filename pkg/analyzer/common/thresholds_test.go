@@ -10,9 +10,10 @@ func TestClassify(t *testing.T) {
 		want  Zone
 	}{
 		{0, ZoneGreen},
-		{4, ZoneGreen},
+		{3, ZoneGreen},
+		{4, ZoneYellow},
 		{5, ZoneYellow},
-		{6, ZoneYellow},
+		{6, ZoneRed},
 		{7, ZoneRed},
 		{100, ZoneRed},
 	}

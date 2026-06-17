@@ -12,9 +12,11 @@ const (
 )
 
 // Thresholds defines the warn and fail boundaries for a metric.
-// Values up to and including WarnAt are green.
-// Values from WarnAt+1 to FailAt are yellow (warning).
-// Values above FailAt are red (failure).
+// WarnAt and FailAt are inclusive lower bounds: they mark the value at which
+// the warning and failure zones begin.
+// Values below WarnAt are green.
+// Values from WarnAt up to (but not including) FailAt are yellow (warning).
+// Values at or above FailAt are red (failure).
 type Thresholds struct {
 	WarnAt int
 	FailAt int
@@ -38,9 +40,9 @@ func (t Thresholds) Validate(name string) error {
 // Classify returns the zone for a given metric value.
 func (t Thresholds) Classify(value int) Zone {
 	switch {
-	case value <= t.WarnAt:
+	case value < t.WarnAt:
 		return ZoneGreen
-	case value <= t.FailAt:
+	case value < t.FailAt:
 		return ZoneYellow
 	default:
 		return ZoneRed

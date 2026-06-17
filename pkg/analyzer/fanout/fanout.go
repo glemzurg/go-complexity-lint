@@ -27,10 +27,10 @@ var (
 )
 
 func init() {
-	Analyzer.Flags.IntVar(&warnAt, "warn", 6,
-		"fan out count above this triggers a warning (yellow zone)")
-	Analyzer.Flags.IntVar(&failAt, "fail", 9,
-		"fan out count above this triggers a failure (red zone)")
+	Analyzer.Flags.IntVar(&warnAt, "warn", 7,
+		"fan out count at or above this triggers a warning (yellow zone)")
+	Analyzer.Flags.IntVar(&failAt, "fail", 10,
+		"fan out count at or above this triggers a failure (red zone)")
 	Analyzer.Flags.StringVar(&common.ExcludePatterns, "exclude", "",
 		"comma-separated filename glob patterns to skip (e.g. *_gen.go)")
 }
@@ -67,7 +67,7 @@ func run(pass *analysis.Pass) (any, error) {
 			Pos:      funcDecl.Pos(),
 			Category: zone.Category(),
 			Message: fmt.Sprintf(
-				"function %s has fan out of %d (warn: >%d, fail: >%d) [%s] "+
+				"function %s has fan out of %d (warn: >=%d, fail: >=%d) [%s] "+
 					"(reduce by extracting groups of related calls into helper functions to limit direct dependencies; if this is a simple routing switch, consider override //complexity:fanout:warn=N,fail=N Simple routing switch.)",
 				funcName, distinctCalls, thresholds.WarnAt, thresholds.FailAt,
 				zone.Category()),

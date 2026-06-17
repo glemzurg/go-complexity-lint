@@ -16,12 +16,12 @@ func init() {
 }
 
 type Settings struct {
-	NestdepthWarn *int `json:"nestdepth-warn"`
-	NestdepthFail *int `json:"nestdepth-fail"`
-	CycloWarn     *int `json:"cyclo-warn"`
-	CycloFail     *int `json:"cyclo-fail"`
-	ParamsWarn    *int `json:"params-warn"`
-	ParamsFail    *int `json:"params-fail"`
+	NestdepthWarn *int    `json:"nestdepth-warn"`
+	NestdepthFail *int    `json:"nestdepth-fail"`
+	CycloWarn     *int    `json:"cyclo-warn"`
+	CycloFail     *int    `json:"cyclo-fail"`
+	ParamsWarn    *int    `json:"params-warn"`
+	ParamsFail    *int    `json:"params-fail"`
 	FanoutWarn    *int    `json:"fanout-warn"`
 	FanoutFail    *int    `json:"fanout-fail"`
 	Exclude       *string `json:"exclude"`

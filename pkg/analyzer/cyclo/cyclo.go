@@ -26,10 +26,10 @@ var (
 )
 
 func init() {
-	Analyzer.Flags.IntVar(&warnAt, "warn", 9,
-		"cyclomatic complexity above this triggers a warning (yellow zone)")
-	Analyzer.Flags.IntVar(&failAt, "fail", 14,
-		"cyclomatic complexity above this triggers a failure (red zone)")
+	Analyzer.Flags.IntVar(&warnAt, "warn", 10,
+		"cyclomatic complexity at or above this triggers a warning (yellow zone)")
+	Analyzer.Flags.IntVar(&failAt, "fail", 15,
+		"cyclomatic complexity at or above this triggers a failure (red zone)")
 	Analyzer.Flags.StringVar(&common.ExcludePatterns, "exclude", "",
 		"comma-separated filename glob patterns to skip (e.g. *_gen.go)")
 }
@@ -66,7 +66,7 @@ func run(pass *analysis.Pass) (any, error) {
 			Pos:      funcDecl.Pos(),
 			Category: zone.Category(),
 			Message: fmt.Sprintf(
-				"function %s has cyclomatic complexity of %d (warn: >%d, fail: >%d) [%s] "+
+				"function %s has cyclomatic complexity of %d (warn: >=%d, fail: >=%d) [%s] "+
 					"(reduce by extracting logic into smaller functions or replacing conditional chains with table/map lookups; if this is a simple routing switch, consider override //complexity:cyclo:warn=N,fail=N Simple routing switch.)",
 				funcName, complexity, thresholds.WarnAt, thresholds.FailAt,
 				zone.Category()),
