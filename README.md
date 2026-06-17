@@ -44,9 +44,16 @@ go-complexity-lint -params-warn=5 -params-fail=8 -fanout-warn=8 -fanout-fail=12 
 
 # Exclude files by glob pattern (matched against base filename)
 go-complexity-lint -exclude="*_gen.go,mock_*.go" ./...
+
+# Control warning handling (red-zone violations always print and always fail)
+go-complexity-lint -warnings=default ./...   # print warnings, exit 0 (default)
+go-complexity-lint -warnings=none ./...      # suppress warnings, exit 0
+go-complexity-lint -warnings=error ./...     # print warnings, exit 1
 ```
 
 Thresholds must be non-negative and `warn` must not exceed `fail`.
+
+The `-warnings` flag accepts `default`, `none`, or `error`. Red-zone diagnostics are always printed and always fail regardless of mode.
 
 ### With `go vet`
 
@@ -57,11 +64,13 @@ go vet -vettool=$(which go-complexity-lint) ./...
 go vet -vettool=$(which go-complexity-lint) -cyclo.exclude="*_gen.go" ./...
 ```
 
-Note: `go vet` treats all diagnostics as failures (exit 1) regardless of zone. It does not distinguish between warnings and errors. To suppress warnings and only fail on red-zone violations, set `warn` equal to `fail` (using each metric's default `fail` value):
+Note: `go vet` treats all diagnostics as failures (exit 1) regardless of zone. It does not distinguish between warnings and errors, and does not support `-warnings`. To suppress warnings and only fail on red-zone violations, either set `warn` equal to `fail` (using each metric's default `fail` value) or use the standalone binary with `-warnings=none`:
 
 ```sh
 go vet -vettool=$(which go-complexity-lint) \
   -nestdepth.warn=7 -cyclo.warn=15 -params.warn=7 -fanout.warn=10 ./...
+
+go-complexity-lint -warnings=none ./...
 ```
 
 For full severity-aware exit codes, use the standalone binary.
@@ -135,8 +144,10 @@ Then run:
 
 | Code | Meaning |
 |------|---------|
-| 0 | No red-zone violations (warnings may be present) |
-| 1 | Red-zone violations found or analysis error |
+| 0 | No failing diagnostics under the selected `-warnings` mode |
+| 1 | Failing diagnostics found or analysis error |
+
+With `-warnings=default`, yellow-zone warnings print but do not fail. With `-warnings=none`, warnings are suppressed. With `-warnings=error`, warnings print and fail. Red-zone violations always print and always fail.
 
 ## References
 

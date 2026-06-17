@@ -45,9 +45,13 @@ func main() {
 		log.Fatal(err)
 	}
 
+	var warningsMode common.WarningsMode
+
 	// Register a global -exclude flag (shared across all analyzers).
 	flag.StringVar(&common.ExcludePatterns, "exclude", "",
 		"comma-separated filename glob patterns to skip (e.g. *_gen.go)")
+	flag.Var(&warningsMode, "warnings",
+		"warning handling: default (print, exit 0), none (suppress), error (print, exit 1)")
 
 	// Register analyzer flags with namespace prefix (e.g., cyclo.warn).
 	// Also register hyphen-separated aliases (e.g., cyclo-warn) for convenience.
@@ -89,9 +93,13 @@ Hyphen-separated aliases also work:
 
   -exclude="*_gen.go,mock_*.go"  skip files matching glob patterns
 
+  -warnings=default  print warnings, exit 0 when only warnings are present
+  -warnings=none     suppress warning output, exit 0 when only warnings are present
+  -warnings=error    print warnings, exit 1 when any warning is present
+
 Exit codes:
-  0  no red-zone violations (warnings may be present)
-  1  red-zone violations found or analysis error
+  0  no failing diagnostics under the selected -warnings mode
+  1  failing diagnostics found or analysis error
 `, progname)
 		os.Exit(1)
 	}
@@ -114,22 +122,11 @@ Exit codes:
 		log.Fatal(err)
 	}
 
-	// Print diagnostics.
-	if err := graph.PrintText(os.Stderr, -1); err != nil {
+	failed, err := printDiagnostics(os.Stderr, graph, warningsMode)
+	if err != nil {
 		log.Fatal(err)
 	}
-
-	// Exit 1 only if any diagnostic has "error" category (red zone).
-	for act := range graph.All() {
-		if act.Err != nil {
-			os.Exit(1)
-		}
-		if act.IsRoot {
-			for _, diag := range act.Diagnostics {
-				if diag.Category == "error" {
-					os.Exit(1)
-				}
-			}
-		}
+	if failed {
+		os.Exit(1)
 	}
 }
