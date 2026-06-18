@@ -14,7 +14,8 @@ var Analyzer = &analysis.Analyzer{
 	Name: "params",
 	Doc: "reports functions with too many parameters\n\n" +
 		"Counts the number of parameters in a function signature, " +
-		"properly handling grouped parameters like func(a, b int).",
+		"properly handling grouped parameters like func(a, b int). " +
+		"A leading ctx context.Context parameter is not counted.",
 	Run:      run,
 	Requires: []*analysis.Analyzer{inspect.Analyzer},
 }
@@ -77,6 +78,7 @@ func run(pass *analysis.Pass) (any, error) {
 
 // countParams counts the total number of parameters, handling grouped params.
 // func(a, b int, c string) has 3 params despite 2 field entries.
+// Idiomatic ctx context.Context parameters are excluded from the count.
 func countParams(funcType *ast.FuncType) int {
 	if funcType.Params == nil {
 		return 0
@@ -86,8 +88,13 @@ func countParams(funcType *ast.FuncType) int {
 		if len(field.Names) == 0 {
 			// Unnamed parameter (e.g., in interface method signatures).
 			count++
-		} else {
-			count += len(field.Names)
+			continue
+		}
+		for _, name := range field.Names {
+			if common.IsExemptContextParam(name.Name, field.Type) {
+				continue
+			}
+			count++
 		}
 	}
 	return count

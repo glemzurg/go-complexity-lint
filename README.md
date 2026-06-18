@@ -23,6 +23,8 @@ A common exception to cyclo thresholds will be for simple-to-understand function
 
 **Fan out** counts distinct function/method calls resolved via type information. Excludes builtins (`len`, `make`, etc.), type conversions, and standard library functions.
 
+**Params** counts each function parameter, including grouped names like `func(a, b int)`. Receivers and variadic parameters are counted normally. A parameter named `ctx` with type `context.Context` is **not** counted — it is standard request-scoped boilerplate, not extra decision load for readers.
+
 **Error guard clause exemption**: Both `nestdepth` and `cyclo` exempt the idiomatic Go error-handling pattern `if <ident> != nil { return ..., <ident> }` where the body is a single return statement with zero-valued results except the final error. The error variable can have any name (`err`, `e`, `dbErr`, etc.).
 
 ## Installation
