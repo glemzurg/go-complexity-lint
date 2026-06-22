@@ -70,6 +70,13 @@ func main() {
 	}
 	flag.Parse()
 
+	// Warnings are suppressed in none mode, so warn thresholds are irrelevant.
+	// Align warn with fail (same as the go vet default) so fail-only flags like
+	// -fanout-fail=2 work without tripping warn-must-not-exceed-fail validation.
+	if warningsMode == common.WarningsNone {
+		common.ConfigureRedZoneOnly(analyzers)
+	}
+
 	args := flag.Args()
 	if len(args) == 0 {
 		fmt.Fprintf(os.Stderr, `%[1]s is a complexity linter for Go programs.

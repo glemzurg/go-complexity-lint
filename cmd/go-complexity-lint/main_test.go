@@ -80,6 +80,12 @@ func TestWarningsModesCLI(t *testing.T) {
 			wantExit:   1,
 			wantSubstr: "SevenParams",
 		},
+		{
+			name:       "none allows fail below default warn without validation error",
+			args:       []string{"-warnings=none", "-fanout-fail=2", "-params-fail=100", "-cyclo-fail=100", "-nestdepth-fail=100", pkg},
+			wantExit:   0,
+			wantAbsent: "warn threshold",
+		},
 	}
 
 	for _, tc := range tests {
