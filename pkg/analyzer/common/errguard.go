@@ -5,6 +5,30 @@ import (
 	"go/token"
 )
 
+// ErrGuardCallExprs returns call expressions nested in the return statement of an
+// idiomatic error guard if. Fanout omits these as boilerplate error wiring.
+func ErrGuardCallExprs(body *ast.BlockStmt) map[*ast.CallExpr]struct{} {
+	excluded := make(map[*ast.CallExpr]struct{})
+	ast.Inspect(body, func(n ast.Node) bool {
+		ifStmt, ok := n.(*ast.IfStmt)
+		if !ok || !IsErrGuard(ifStmt) {
+			return true
+		}
+		ret, ok := ifStmt.Body.List[0].(*ast.ReturnStmt)
+		if !ok {
+			return true
+		}
+		ast.Inspect(ret, func(n2 ast.Node) bool {
+			if call, ok := n2.(*ast.CallExpr); ok {
+				excluded[call] = struct{}{}
+			}
+			return true
+		})
+		return true
+	})
+	return excluded
+}
+
 // IsErrGuard reports whether an if statement is an idiomatic Go error guard clause.
 // An if statement is an error guard when ALL of these are true:
 //  1. The condition is `<ident> != nil` (or `nil != <ident>`)

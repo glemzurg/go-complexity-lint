@@ -95,3 +95,12 @@ func GoFuncFanOut() { // want `function GoFuncFanOut has fan out of 7 \(warn: >=
 		_ = dep.G()
 	}()
 }
+
+// ErrGuardReturn omits dep.Wrap inside the err-guard return. Green zone.
+func ErrGuardReturn() error {
+	_ = dep.A()
+	if err := dep.Fail(); err != nil {
+		return dep.Wrap(err)
+	}
+	return nil
+}

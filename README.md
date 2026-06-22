@@ -21,7 +21,7 @@ A common exception to cyclo thresholds will be for simple-to-understand function
 
 **Nesting depth** counts: `if`/`else`/`else if`, `for`, `range`, `switch`, `select`, `type switch`, func literals. Each level adds 1 to depth.
 
-**Fan out** counts distinct function/method calls resolved via type information. Excludes builtins (`len`, `make`, etc.), type conversions, and standard library packages (resolved against GOROOT, not import-path shape).
+**Fan out** counts distinct function/method calls resolved via type information. Excludes builtins (`len`, `make`, etc.), type conversions, standard library packages (resolved against GOROOT, not import-path shape), and calls nested in idiomatic error guard return expressions (same pattern cyclo and nestdepth exempt).
 
 **Params** counts each function parameter, including grouped names like `func(a, b int)`. Receivers and variadic parameters are counted normally. A parameter named `ctx` with type `context.Context` is **not** counted — it is standard request-scoped boilerplate, not extra decision load for readers.
 

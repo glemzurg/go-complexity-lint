@@ -9,6 +9,10 @@ func F() int { return 6 }
 func G() int { return 7 }
 func H() int { return 8 }
 
+func Fail() error { return nil }
+
+func Wrap(err error) error { return err }
+
 type S struct{}
 
 func (s S) Method() int { return 9 }

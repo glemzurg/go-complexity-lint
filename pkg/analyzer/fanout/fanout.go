@@ -15,7 +15,8 @@ var Analyzer = &analysis.Analyzer{
 	Name: "fanout",
 	Doc: "reports functions with too many distinct function calls (fan out)\n\n" +
 		"Counts unique non-builtin, non-stdlib function/method calls in a function. " +
-		"The same function called multiple times counts as 1.",
+		"The same function called multiple times counts as 1. " +
+		"Calls in idiomatic error guard return expressions are omitted.",
 	Run:      run,
 	Requires: []*analysis.Analyzer{inspect.Analyzer},
 }
@@ -80,10 +81,14 @@ func run(pass *analysis.Pass) (any, error) {
 // function/method calls in a function body.
 func countDistinctCalls(pass *analysis.Pass, body *ast.BlockStmt) int {
 	seen := make(map[types.Object]bool)
+	errGuardCalls := common.ErrGuardCallExprs(body)
 
 	ast.Inspect(body, func(n ast.Node) bool {
 		call, ok := n.(*ast.CallExpr)
 		if !ok {
+			return true
+		}
+		if _, omitted := errGuardCalls[call]; omitted {
 			return true
 		}
 
