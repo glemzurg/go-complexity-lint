@@ -15,12 +15,12 @@ func BuiltinsOnly() {
 	_ = len(s)
 }
 
-// StdlibOnly has fan out of 0 (stdlib excluded). Green zone.
+// StdlibOnly has fan out of 1 (same-package helper call). Green zone.
 func StdlibOnly() {
 	_ = helper()
 }
 
-// RepeatedCall has fan out of 0 (same-package calls with no-dot path excluded). Green zone.
+// RepeatedCall has fan out of 1 (same function called twice). Green zone.
 func RepeatedCall() {
 	helper()
 	helper()
@@ -66,8 +66,9 @@ func MethodCall() {
 
 // FuncLitFanOut tests that calls inside a func literal count toward
 // the enclosing function's fan out.
-// 7 distinct external calls inside the func literal. Yellow zone (warning).
-func FuncLitFanOut() { // want `function FuncLitFanOut has fan out of 7 \(warn: >=7, fail: >=10\) \[warning\] \(reduce by extracting groups of related calls into helper functions; flat routing switches and one-call-per-field constructors are acceptable — consider //complexity:fanout:warn=N,fail=N override.\)`
+// 7 distinct external calls inside the func literal plus the local fn()
+// invocation. Yellow zone (warning).
+func FuncLitFanOut() { // want `function FuncLitFanOut has fan out of 8 \(warn: >=7, fail: >=10\) \[warning\] \(reduce by extracting groups of related calls into helper functions; flat routing switches and one-call-per-field constructors are acceptable — consider //complexity:fanout:warn=N,fail=N override.\)`
 	fn := func() {
 		_ = dep.A()
 		_ = dep.B()

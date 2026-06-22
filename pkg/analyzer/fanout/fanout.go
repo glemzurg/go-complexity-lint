@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"go/ast"
 	"go/types"
-	"strings"
 
 	"github.com/glemzurg/go-complexity-lint/pkg/analyzer/common"
 	"golang.org/x/tools/go/analysis"
@@ -113,8 +112,13 @@ func countDistinctCalls(pass *analysis.Pass, body *ast.BlockStmt) int {
 			return true
 		}
 
+		pkg := obj.Pkg()
+		if pkg == nil {
+			return true
+		}
+
 		// Exclude standard library functions.
-		if pkg := obj.Pkg(); pkg != nil && isStdlib(pkg.Path()) {
+		if common.IsStdlib(pkg.Path()) {
 			return true
 		}
 
@@ -123,10 +127,4 @@ func countDistinctCalls(pass *analysis.Pass, body *ast.BlockStmt) int {
 	})
 
 	return len(seen)
-}
-
-// isStdlib reports whether a package path belongs to the Go standard library.
-// Standard library packages have no dots in their path.
-func isStdlib(pkgPath string) bool {
-	return !strings.Contains(pkgPath, ".")
 }
